@@ -96,25 +96,12 @@ class YiiExcelImporter {
     /**
      * Import from CSV. This will create/save an CActiveRecord object per excel row.
      *
-     * - attribute is the attribute of the CActiveRecord
-     * - columnNumber is the column index in CSV. So the attribute will get it's value.
-     * - value default value you can set on insert.
-     *
-     * $importer->import(\PRODUCT::class, [
-     *      [
-     *          'attribute' => 'NAME',
-     *          'columnNumber' => 0,
-     *          'unique' => true
-     *      ],
-     *      [
-     *          'attribute' => 'TITLE',
-     *          'columnNumber' => 16
-     *      ],
-     *      [
-     *          'attribute' => 'PRICE',
-     *          'value' => 45.5
-     *      ]
-     * ]);
+     * - <b>attribute</b> is the attribute of the CActiveRecord
+     * - <b>value</b> string a PHP expression that will be evaluated for every attribute per row
+     * In this expression, you can use the following variables:
+     * <ul>
+     *      <li><code>$row</code> the excel row in array format where indexes are column positions.</li>
+     * </ul>
      *
      * @param string $class CActiveRecord class name
      * @param array $configs Attribute config on how to import data.
@@ -129,7 +116,7 @@ class YiiExcelImporter {
             $uniqueAttributes = [];
             foreach ($configs as $config) {
                 if (isset($config['attribute']) && $model->hasAttribute($config['attribute'])) {
-                    $value = $this->getFinalValue($line, $config);
+                    $value = Yii::app()->evaluateExpression($config['value'], array('row' => $line));
                     //Create array of unique attributes and the values to insert for later check
                     if (isset($config['unique']) && $config['unique']) {
                         $uniqueAttributes[$config['attribute']] = $value;
@@ -144,19 +131,6 @@ class YiiExcelImporter {
             }
         }
         return $countInserted;
-    }
-
-    /**
-     * Will return final value to import. Search excel line or return default value
-     * @param array $excelLine
-     * @param array $config Attribute config
-     * @throws Exception
-     */
-    private function getFinalValue($excelLine, $config) {
-        if (!isset($config['columnNumber']) && !isset($config['value'])) {
-            throw new Exception("You didn't define 'columnNumber' or 'value' for the attribute.");
-        }
-        return isset($config['columnNumber']) ? $excelLine[$config['columnNumber']] : $config['value'];
     }
 
     /**
