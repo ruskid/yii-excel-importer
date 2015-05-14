@@ -117,7 +117,16 @@ class YiiExcelImporter {
             $uniqueAttributes = [];
             foreach ($configs as $config) {
                 if (isset($config['attribute']) && $model->hasAttribute($config['attribute'])) {
-                    $value = Yii::app()->evaluateExpression($config['value'], array('row' => $line));
+                    if (is_array($config['value'])) {
+                        $config['value'][1]['row'] = $line;
+                        $value = Yii::app()->evaluateExpression($config['value'][0], $config['value'][1]);
+                    } else {
+                        $value = Yii::app()->evaluateExpression($config['value'], array('row' => $line));
+                    }
+
+                    print_r($value);
+                    die();
+
                     //Create array of unique attributes and the values to insert for later check
                     if (isset($config['unique']) && $config['unique']) {
                         $uniqueAttributes[$config['attribute']] = $value;

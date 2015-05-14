@@ -25,8 +25,8 @@ $importer->import('PRODUCTO_DETAILS', [
             'value' => 'PRODUCTO::model()->findByAttributes(["NOMBRE" => "$row[0]"])->ID'
         ],
         [
-            'attribute' => 'RESPONSABLE',
-            'value' => '$row[1]'
+            'attribute' => 'GRUPO_COMPRES',
+            'value' => ['$array[$row[0]]['grupo']', ['array' => $some_array_as_param]],
         ],
 ]);
 ```
