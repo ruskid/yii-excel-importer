@@ -123,10 +123,6 @@ class YiiExcelImporter {
                     } else {
                         $value = Yii::app()->evaluateExpression($config['value'], array('row' => $line));
                     }
-
-                    print_r($value);
-                    die();
-
                     //Create array of unique attributes and the values to insert for later check
                     if (isset($config['unique']) && $config['unique']) {
                         $uniqueAttributes[$config['attribute']] = $value;
