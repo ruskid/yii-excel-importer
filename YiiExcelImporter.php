@@ -74,6 +74,7 @@ class YiiExcelImporter {
         $allRows = [];
         if (($fp = fopen($filename, 'r')) !== FALSE) {
             while (($line = fgetcsv($fp, 0, ";")) !== FALSE) {
+                $line = array_map("utf8_encode", $line); //encoding quick fix.
                 array_push($allRows, $line);
             }
         }
